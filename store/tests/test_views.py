@@ -51,9 +51,15 @@ class TestViewResponse(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_view_function(self):
-        request = self.factory.get("/item/django-beginners")
+        request = self.factory.get("/django-beginners")
         response = all_products(request)
         html = response.content.decode("utf8")
         self.assertNotIn("<title>Home</title>", html)
         self.assertTrue(html.startswith("\n<!DOCTYPE html>\n"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_url_allowed_host(self):
+        response = self.c.get("/", HTTP_HOST="noaddress.com")
+        self.assertEqual(response.status_code, 400)
+        reponse = self.c.get("/", HTTP_HOST="yourdomain.com")
         self.assertEqual(response.status_code, 200)
