@@ -1,6 +1,6 @@
 from unittest import skip
 
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
 from django.http import HttpRequest
 from django.contrib.auth.models import User
 
@@ -14,6 +14,7 @@ from store.views import all_products
 class TestViewResponse(TestCase):
     def setUp(self):
         self.c = Client()
+        self.factory = RequestFactory()
         Category.objects.create(name="django", slug="django")
         User.objects.create(username="admin")
         user = User.objects.first()
@@ -45,6 +46,14 @@ class TestViewResponse(TestCase):
         request = HttpRequest()
         response = all_products(request)
         html = response.content.decode("utf8")
-        self.assertIn("<title>Home</title>", html)
+        self.assertNotIn("<title>Home</title>", html)
+        self.assertTrue(html.startswith("\n<!DOCTYPE html>\n"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_function(self):
+        request = self.factory.get("/item/django-beginners")
+        response = all_products(request)
+        html = response.content.decode("utf8")
+        self.assertNotIn("<title>Home</title>", html)
         self.assertTrue(html.startswith("\n<!DOCTYPE html>\n"))
         self.assertEqual(response.status_code, 200)
