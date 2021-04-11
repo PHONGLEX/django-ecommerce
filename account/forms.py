@@ -51,3 +51,21 @@ class UserLoginForm(AuthenticationForm):
             'id': 'login-pwd'
     }))
     
+class UserEditForm(forms.ModelForm):
+    email = forms.EmailField(label='Account email (can not be changed)', max_length=200, widget=forms.TextInput(
+        attrs={'class': 'form-control mb-3', 'placeholder': 'email', 'id':'form-email', 'readonly': 'readonly'}
+    ))
+
+    first_name = forms.CharField(label='Firstname', min_length=4, max_length=50, widget=forms.TextInput(attrs={
+        'class': 'form-control mb-3', 'placeholder': 'Firstname', 'id': 'form-firstname'
+    }))
+
+    class Meta:
+        model = UserBase
+        fields = ('email', 'first_name')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['first_name'].required = True
+        self.fields['email'].required = True
+    
