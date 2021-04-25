@@ -26,7 +26,7 @@ SECRET_KEY = "5zn+e17v8de$_)xb9@$xyh3^f6u207!7ok(tb_(^nk9ry4-i!k"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["yourdomain.com", "127.0.0.1"]
+ALLOWED_HOSTS = ["yourdomain.com", "127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "store",
     "basket",
     "account",
+    "payment",
+    "orders"
 ]
 
 MIDDLEWARE = [
@@ -134,8 +136,14 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
+# Basket session id
+BASKET_SESSION_ID = 'skey'
+
 AUTH_USER_MODEL = "account.UserBase"
 LOGIN_REDIRECT_URL = "/account/dashboard"
 LOGIN_URL = "/account/login"
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Stripe Payment
+STRIPE_ENDPOINT_SECRET = 'whsec_IQqrGRg3tgvg8mWhh6ym4WqfnIxiBiCR'

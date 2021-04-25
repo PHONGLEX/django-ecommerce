@@ -3,6 +3,8 @@ from .forms import RegistrationForm, UserEditForm
 from .token import account_activation_token
 from .models import UserBase
 
+from orders.views import user_order
+
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
@@ -13,8 +15,9 @@ from django.contrib.auth import login, logout
 
 
 @login_required
-def account_dashboard(request):                                                                                                                                                                                                                                                                        
-    return render(request, 'account/user/dashboard.html')
+def account_dashboard(request):
+    orders = user_order(request)
+    return render(request, 'account/user/dashboard.html', {'orders': orders})
 
 @login_required
 def edit_details(request):
