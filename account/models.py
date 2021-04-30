@@ -55,6 +55,7 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    
 
     objects = CustomAccountManager()
 
@@ -76,3 +77,5 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.user_name
+
+

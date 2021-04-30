@@ -126,7 +126,7 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Static files (css, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = "/static/"
@@ -139,11 +139,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 # Basket session id
 BASKET_SESSION_ID = 'skey'
 
+# Stripe Payment
+os.environ.setdefault('STRIPE_PUBLISHABLE_KEY', 'pk_test_51IjxbrEsCkJvkHwv6TrxkprJYCfxaLXyzSK8NnWembJ4LB8jWEPtitrvYQ2Y8SnIwCqfjuRJEWqeJys523ZvXMzp00EYBJLXeP')
+STRIPE_SECRET_KEY = 'sk_test_51IjxbrEsCkJvkHwv9yFrXVQQ8VrSu17cqkJMJKGrakBcuxJMLnPuzgB53Ylqa8gHSMolV8XSyf5POS8L37mRgZZ500DgCwJ3wB'
+# STRIPE_ENDPOINT_SECRET = 'whsec_IQqrGRg3tgvg8mWhh6ym4WqfnIxiBiCR'
+
+# Custom user model
 AUTH_USER_MODEL = "account.UserBase"
 LOGIN_REDIRECT_URL = "/account/dashboard"
 LOGIN_URL = "/account/login"
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# Stripe Payment
-STRIPE_ENDPOINT_SECRET = 'whsec_IQqrGRg3tgvg8mWhh6ym4WqfnIxiBiCR'

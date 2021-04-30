@@ -25,7 +25,7 @@
         integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous">
     </script>
     <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
-    <link rel="stylesheet" href="{% static 'basket/css/basket.css' %}">
+    <link rel="stylesheet" href="{% block stylesheet %} {% endblock %}">
 </head>
 
 <body>
@@ -48,7 +48,7 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle d-none d-md-block fw500" href="#" id="navbarDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Library
+                                    All
                                     <i class="ps-1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                             fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
                                             <path fill-rule="evenodd"
@@ -56,7 +56,7 @@
                                         </svg></i>
                                 </a>
                                 <ul class="dropdown-menu rounded-0 border-0" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="{% url 'store:all_products' %}">All</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'store:store_home' %}">All</a></li>
                                     {% for c in categories %}
                                     <li {% if category.slug == c.slug %}class="selected" {% endif %}>
                                         <a class="dropdown-item" href="{{ c.get_absolute_url }}">{{ c.name|title }}</a>
@@ -92,7 +92,7 @@
                             <span class="fs15 fw500">Logout</span>
                         </a>
                         {% else %}
-                        <a type="button" role="button" href="#"
+                        <a type="button" role="button" href="{% url 'account:login' %}"
                             class="btn btn-outline-secondary border-0 basket-btn">
                             <div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
@@ -119,7 +119,7 @@
                             <span class="fs15 fw500">Account</span>
                         </a>
     
-                        <a type="button" role="button" href="{% url "basket:basket_summary" %}"
+                        <a type="button" role="button" href="{% url 'basket:basket_summary' %}"
                             class="btn btn-outline-secondary border-0 basket-btn">
     
                             {% with total_qty=basket|length %}
@@ -144,7 +144,7 @@
                     <div class="d-md-none d-lg-none d-xl-none">
                         <div class="collapse navbar-collapse" id="navbarCollapse">
                             <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                                <li><a class="dropdown-item" href="{% url "store:all_products" %}">All</a></li>
+                                <li><a class="dropdown-item" href="{% url 'store:store_home' %}">All</a></li>
                                 {% for c in categories %}
                                 <li {% if category.slug == c.slug %}class="selected" {% endif %}>
                                     <a class="dropdown-item" href="{{ c.get_absolute_url }}">{{ c.name|title }}</a>
@@ -161,11 +161,11 @@
                 </div>
             </nav>
         </header>
-    <div id="content">
+    <main class="pt-5">
         {% block content %}
 
         {% endblock content %}
-    </div>
+    </main>
     
     <footer class="container py-5 footer">
         <hr>
