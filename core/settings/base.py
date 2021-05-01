@@ -146,7 +146,7 @@ STRIPE_SECRET_KEY = 'sk_test_51IjxbrEsCkJvkHwv9yFrXVQQ8VrSu17cqkJMJKGrakBcuxJMLn
 # STRIPE_ENDPOINT_SECRET = 'whsec_IQqrGRg3tgvg8mWhh6ym4WqfnIxiBiCR'
 
 # Custom user model
-AUTH_USER_MODEL = "account.UserBase"
+AUTH_USER_MODEL = "account.Customer"
 LOGIN_REDIRECT_URL = "/account/dashboard"
 LOGIN_URL = "/account/login"
 

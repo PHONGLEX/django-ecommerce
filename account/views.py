@@ -1,17 +1,38 @@
-from django.shortcuts import render, redirect
-from .forms import RegistrationForm, UserEditForm
-from .token import account_activation_token
-from .models import UserBase
-
-from orders.views import user_order
-
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import login, logout
+from django.urls import reverse
+from django.contrib import messages
+
+from store.models import Product
+from .forms import RegistrationForm, UserEditForm, UserAddressForm
+from .token import account_activation_token
+from .models import Customer, Address
+from orders.views import user_order
+
+
+@login_required
+def wishlist(request):
+    products = Product.objects.filter(users_wishlist=request.user)
+    return render(request, "account/dashboard/user_wish_list.html", {"wishlist": products})
+
+
+@login_required
+def add_to_wishlist(request, id):
+    product = get_object_or_404(Product, id=id)
+    if product.users_wishlist.filter(id=request.user.id).exists():
+        product.users_wishlist.remove(request.user)
+        messages.success(request, product.title + " has been remove from your WishList")
+    else:
+        product.users_wishlist.add(request.user)
+        messages.success(request, "Added " + product.title + " to your WishList")
+    return HttpResponseRedirect(request.META["HTTP_REFERER"])
+
 
 
 @login_required
@@ -33,7 +54,7 @@ def edit_details(request):
 
 @login_required
 def delete_user(request):
-    user = UserBase.objects.get(user_name=request.user)
+    user = Customer.objects.get(name=request.user)
     user.is_active = False
     user.save()
     logout(request)
@@ -69,7 +90,7 @@ def account_register(request):
 def account_activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
-        user = UserBase.objects.get(pk=uid)
+        user = Customer.objects.get(pk=uid)
     except():
         pass
     if user is not None and account_activation_token.check_token(user, token):
@@ -81,4 +102,47 @@ def account_activate(request, uidb64, token):
         return render(request, 'account/registration/activation_invalid.html')
 
 
+# Addresses
+@login_required
+def view_address(request):
+    addresses = Address.objects.filter(customer=request.user)
+    return render(request, "account/dashboard/addresses.html", {"addresses": addresses})
 
+@login_required
+def add_address(request):
+    if request.method == "POST":
+        address_form = UserAddressForm(data=request.POST)
+        if address_form.is_valid():
+            address_form = address_form.save(commit=False)
+            address_form.customer = request.user
+            address_form.save()
+            return HttpResponseRedirect(reverse("account:addresses"))
+    else:
+        print('enter get')
+        address_form = UserAddressForm()
+        print(address_form)
+    return render(request, "account/dashboard/edit_address.html", {"form": address_form})
+
+@login_required
+def edit_address(request, id):
+    if request.method == "POST":
+        address = Address.objects.get(pk=id, customer=request.user)
+        address_form = UserAddressForm(instance=address, data=request.POST)
+        if address_form.is_valid():
+            address_form.save()
+            return HttpResponseRedirect(reverse("account:addresses"))
+    else:
+        address = Address.objects.get(pk=id, customer=request.user)
+        address_form = UserAddressForm(instance=address)
+    return render(request, "account/dashboard/edit_address.html", {"form": address_form})
+
+@login_required
+def delete_address(request, id):
+    address = Address.objects.get(pk=id, customer=request.user).delete()
+    return redirect("account:addresses")
+
+@login_required
+def set_default(request, id):
+    Address.objects.filter(customer=request.user, default=True).update(default=False)
+    Address.objects.filter(pk=id, customer=request.user).update(default=True)
+    return redirect("account:addresses")
